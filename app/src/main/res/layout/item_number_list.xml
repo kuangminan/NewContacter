@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_contact_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:maxWidth="200dip"
+            android:textColor="@color/gray_font_3"
+            android:textSize="20sp"
+            tools:text="13000800080" />
+
+        <ImageView
+            android:id="@+id/item_contact_message"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="30dp"
+            android:layout_toLeftOf="@+id/item_contact_phone"
+            android:contentDescription="@string/image_contentDescription"
+            android:padding="5dp"
+            android:src="@mipmap/img_sendmessage"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/item_contact_phone"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:contentDescription="@string/image_contentDescription"
+            android:padding="5dp"
+            android:src="@mipmap/img_mobile" />
+    </RelativeLayout>
+
+</LinearLayout>

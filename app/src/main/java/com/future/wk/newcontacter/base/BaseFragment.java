@@ -1,0 +1,166 @@
+package com.future.wk.newcontacter.base;
+
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+
+import com.future.wk.newcontacter.R;
+import com.future.wk.newcontacter.base.BaseActivity;
+import com.future.wk.newcontacter.base.mvp.IBase;
+import com.future.wk.newcontacter.base.mvp.presenter.BasePresenter;
+import com.future.wk.newcontacter.base.mvp.view.IBaseView;
+import com.future.wk.newcontacter.widget.sweetdialog.OnDismissCallbackListener;
+
+import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+/**
+ * @author wty
+ * @date 2016-07-09
+ * 功能描述：基本fragment，其他所有fragment需要继承
+ *
+ * 基础类做了懒加载数据
+ */
+public abstract class BaseFragment<P extends BasePresenter> extends Fragment implements IBase<P> {
+
+    protected P mPresenter;
+    protected BaseActivity activity;
+    protected View mRootView;
+    protected boolean isInitData = false;//是否已经初始化数据
+    protected boolean isInitView = false;//是否已经加载视图
+    protected Bundle bundle;
+    public SweetAlertDialog loadingdialog;
+
+    private String TAG = "BaseFragment";
+
+    public BaseFragment() {
+        super();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mRootView == null) {
+            mRootView = inflater.inflate(getLayoutResource(), container, false);
+            ButterKnife.bind(this, mRootView);
+        }
+        this.isInitView = true;
+        return mRootView;
+    }
+
+    @Nullable
+    @Override
+    public View getView() {
+        return mRootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        bundle = savedInstanceState;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser && isInitView){
+            //setUserVisibleHint在onCreateView之前调用的，
+            //在视图未初始化的时候就使用的话，会有空指针异常
+            onInitData();
+            doWorkOnResume();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getUserVisibleHint()){
+            onInitData();
+            doWorkOnResume();
+        }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+        if (mPresenter != null && this instanceof IBaseView) {
+            mPresenter.detachView();
+            mPresenter = null;
+            activity = null;
+        }
+        isInitData = false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //onDestroyView的执行和Activity的onDestroy不一样，不会销毁当前的页面，所以Fragment的所有成员变量的引用都还在
+        // 我们在onCreateView的时候，先判断该取到的数据是否为空，比如Fragment的根视图rootView，
+        // 网络请求获取到的数据等，如果不为空就不用再次执行。
+        this.isInitView = false;
+        ViewGroup parent = (ViewGroup) mRootView.getParent();
+        if (parent != null) {
+            parent.removeView(mRootView);
+        }
+    }
+
+    /**
+     * 功能描述：解决Fragment getActivity空指针问题
+     **/
+    public void setActivity(BaseActivity activity){
+        this.activity = activity;
+    }
+
+    /**
+     * 功能描述：当fragment处于可见并且已经初始之后，做一些操作
+     **/
+    public void doWorkOnResume(){
+
+    }
+
+    /**
+     * 功能描述：初始化Fragment的标题栏
+     **/
+    public void initFragmentActionBar(String title){
+        if(activity == null)return;
+        activity.getDefaultNavigation().setTitle(title);
+        activity.getDefaultNavigation().getLeftButton().show();
+       /* activity.getDefaultNavigation().setRightButton(R.mipmap.actionbar_back, "搜索", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getContext() instanceof Activity){
+                    Log.d(TAG,"Search");
+                    activity.showAppToast("start search activity!");
+                }
+            }
+        });*/
+        activity.getDefaultNavigation().getRightButton().show();
+    }
+
+    /**
+     * 功能描述：初始化view以及数据
+     **/
+    private void onInitData(){
+        if(!isInitData){
+            isInitData = true;
+            mPresenter = getPresenter();
+            if (mPresenter != null && this instanceof IBaseView) {
+                mPresenter.attachView((IBaseView) this);
+            }
+            onInitView(bundle);
+        }
+    }
+
+
+}

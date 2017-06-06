@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layout_background">
+
+    <RelativeLayout
+        android:id="@+id/searchcontactLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ExpandableListView
+            android:id="@+id/expendlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#00000000"
+            android:visibility="gone">
+        </ExpandableListView>
+
+        <TextView
+        android:id="@+id/blankTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="无内容" />
+
+    </RelativeLayout>
+
+</LinearLayout>

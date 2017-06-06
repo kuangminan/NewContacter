@@ -1,0 +1,34 @@
+<resources>
+
+    <style name="AppTheme" parent="@style/Base.V7.Theme.AppCompat.Light">
+        <item name="actionBarStyle">@style/AppActionBarBaseStyle</item>
+        <item name="toolbarStyle">@style/AppActionBarBaseStyle</item>
+        <!--去掉actionbar阴影 -->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppActionBarBaseStyle" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+        <item name="height">50dip</item>
+    </style>
+
+    <!-- 定义对话框样式 -->
+    <style name="CopyTextDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowBackground">@color/transparent</item> <!-- 背景透明 -->
+
+    </style>
+
+    <!-- progress对话框主题 -->
+    <style name="DialogTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>
