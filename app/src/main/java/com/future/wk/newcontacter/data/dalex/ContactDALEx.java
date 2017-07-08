@@ -56,7 +56,7 @@ public class ContactDALEx extends SqliteBaseDALEx {
     private String userphone; // 手机号码
 
     @DatabaseField(Type = FieldType.INT)
-    private Integer phonecount;
+    private Integer phonecount;//手机号码数量
 
     @DatabaseField(Type = FieldType.VARCHAR)
     private String userjob; // 职业

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class NetworkModel implements INetworkContract.INetworkModel {
     @Override
-    public void getNetworkContactList() {
-        //...
+    public List getNetworkContactList() {
+        return ContactDALEx.get().findAllNormalContacter();
     }
 
     @Override

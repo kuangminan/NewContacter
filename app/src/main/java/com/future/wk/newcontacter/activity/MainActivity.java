@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +27,7 @@ import com.future.wk.newcontacter.base.mvp.presenter.BasePresenter;
 import com.future.wk.newcontacter.mvp.view.MyselfFragment;
 import com.future.wk.newcontacter.mvp.view.NetworkContacterFragment;
 import com.future.wk.newcontacter.mvp.view.NetworkFragment;
+import com.future.wk.newcontacter.util.PreferenceUtil;
 import com.future.wk.newcontacter.widget.common.TabStripView;
 import com.future.wk.newcontacter.widget.navigation.NavigationText;
 
@@ -53,6 +55,12 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+    public static void startMainActivity(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        activity.startActivity(intent);
+    }
+
+
     @Override
     public void onInitView(Bundle savedInstanceState) {
         //EventBus.getDefault().register(this);
@@ -63,9 +71,11 @@ public class MainActivity extends BaseActivity {
         setRightButton();
 
         // Set up the navigation drawer.
-        //mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
+            View headview = navigationView.getHeaderView(0);
+            TextView headText = (TextView)headview.findViewById(R.id.nav_text_view);
+            headText.setText(PreferenceUtil.getInstance().getLastName());
             setupDrawerContent(navigationView);
         }
 
@@ -106,19 +116,24 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Timer tExit;
-            if (!isExit) {
-                isExit = true; // 准备退出
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                tExit = new Timer();
-                tExit.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        isExit = false; // 取消退出
-                    }
-                }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
-            } else {
-                finish();
+            Log.d(TAG,"Drawer Layout show:"+ mDrawerLayout.isShown());
+            if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+                mDrawerLayout.closeDrawers();
+            }else {
+                Timer tExit;
+                if (!isExit) {
+                    isExit = true; // 准备退出
+                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                    tExit = new Timer();
+                    tExit.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            isExit = false; // 取消退出
+                        }
+                    }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+                } else {
+                    finish();
+                }
             }
             return true;
         }
@@ -188,6 +203,8 @@ public class MainActivity extends BaseActivity {
                             case R.id.setting_navigation_menu_item:
                                 Log.d(TAG,"setting_navigation_menu_item");
                                 Toast.makeText(MainActivity.this, "点击设置栏", Toast.LENGTH_SHORT);
+                                Intent mySettingIntent = new Intent(MainActivity.this, MySettingActivity.class);
+                                startActivity(mySettingIntent);
                                 break;
                             case R.id.aboutus_navigation_menu_item:
                                 Log.d(TAG,"aboutus_navigation_menu_item");

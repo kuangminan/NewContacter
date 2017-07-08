@@ -60,8 +60,6 @@ public class SearchContactActivity extends BaseActivity<SearchContactPresenter> 
     public void onInitView(Bundle savedInstanceState) {
         initActionBar();
         initGroupList();
-
-
     }
 
     public void initGroupList(){

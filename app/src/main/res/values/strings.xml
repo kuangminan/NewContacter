@@ -24,4 +24,6 @@
     <string name="setting">个人设置</string>
     <string name="aboutus">关于我们</string>
 
+    <string name="serverurl">http://vas.samsungapps.com/stub/stubUpdateCheck.as</string>
+
 </resources>

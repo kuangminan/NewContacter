@@ -5,10 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
+import com.future.wk.newcontacter.base.CloudManager;
 import com.future.wk.newcontacter.data.dalex.ContactDALEx;
 import com.future.wk.newcontacter.data.dalex.PhoneNumberDALEx;
 import com.future.wk.newcontacter.mvp.contract.ILocalContract;
+import com.future.wk.newcontacter.util.ICallBack;
+import com.future.wk.newcontacter.util.ICallBackObject;
 
 import java.util.List;
 
@@ -17,6 +21,8 @@ import java.util.List;
  */
 
 public class LocalModel implements ILocalContract.ILocalModel {
+    private String TAG = "LocalModel";
+
     @Override
     public Cursor getFromContactList(Context mcontext) {
         ContentResolver contentResolver = mcontext.getContentResolver();
@@ -29,12 +35,15 @@ public class LocalModel implements ILocalContract.ILocalModel {
         return  ContactDALEx.get().findAllNormalContacter();
     }
 
-    public void saveContactList(List<ContactDALEx> mList){
+    public void saveContactList(List<ContactDALEx> mList, ICallBackObject<ContactDALEx> callBackObject){
         ContactDALEx.get().saveOrUpdate(mList);
+        Log.d(TAG,"Save contact list");
+        CloudManager.getInstance().getContactManager().addContacterList(mList, callBackObject);
     }
 
-    public void saveContactNumber(List<PhoneNumberDALEx> mList){
-        PhoneNumberDALEx.get().saveOrUpdate(mList);
+    public void saveContactNumber(List<PhoneNumberDALEx> mList, ICallBackObject<PhoneNumberDALEx> callBackObject){
+        PhoneNumberDALEx.get().saveOrUpdate(mList);  //存入本地数据库中
+        CloudManager.getInstance().getPhonenumberManager().addContacterList(mList, callBackObject);
     }
 
     public Cursor getNumberByContactID(Context mcontext, String ContactID){

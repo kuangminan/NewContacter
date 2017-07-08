@@ -7,6 +7,7 @@ import com.future.wk.newcontacter.base.mvp.model.IBaseModel;
 import com.future.wk.newcontacter.base.mvp.view.IBaseView;
 import com.future.wk.newcontacter.data.dalex.ContactDALEx;
 import com.future.wk.newcontacter.data.dalex.PhoneNumberDALEx;
+import com.future.wk.newcontacter.util.ICallBackObject;
 
 import java.util.List;
 
@@ -18,8 +19,8 @@ public interface ILocalContract {
     interface ILocalModel extends IBaseModel{
         Cursor getFromContactList(Context mcontext);
         List<ContactDALEx> getNormalContactList(Context mcontext);
-        void saveContactList(List<ContactDALEx> mList);
-        void saveContactNumber(List<PhoneNumberDALEx> mList);
+        void saveContactList(List<ContactDALEx> mList, ICallBackObject<ContactDALEx> callBackObject);
+        void saveContactNumber(List<PhoneNumberDALEx> mList, ICallBackObject<PhoneNumberDALEx> callBackObject);
         Cursor getNumberByContactID(Context mcontext, String ContactID);
         Cursor getAllNumberFromCP(Context mcontext);
         //...

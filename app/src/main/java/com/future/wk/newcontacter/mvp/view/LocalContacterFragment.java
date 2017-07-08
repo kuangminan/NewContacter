@@ -2,6 +2,7 @@ package com.future.wk.newcontacter.mvp.view;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
     private ContactListAdapter adapter;
     private List<ContactDALEx> mDataList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
+    private String TAG = "LocalContacterFragment";
 
     @Override
     public LocalPresenter getPresenter(){
@@ -74,6 +76,48 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
         listview.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+                Log.d(TAG,"onRefresh()");
+                int localContactLength = mPresenter.numOfLocalContact(getActivity());
+                int networkContactLenght = mPresenter.getNormalContact(getActivity()).size();
+                if(localContactLength == networkContactLenght){  //已经同步到最新
+                    Log.d(TAG,"NO need update");
+                    activity.showAppToast("无需更新");
+                }else if(localContactLength > networkContactLenght){  //本地增加了联系人
+                    Log.d(TAG,"Need update to network");
+                    SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE);
+                    dialog.setContentText("将新增的本地联系人同步到网络？");
+                    dialog.setTitleText("需要同步");
+                    dialog.setConfirmText("确定");
+                    dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            activity.showLoading("同步中...");
+                            sweetAlertDialog.cancel();
+                            mPresenter.updateNetworkContact(getActivity(),new ICallBack<ContactDALEx>(){
+                                @Override
+                                public void onSuccess(List<ContactDALEx> mList){
+                                    mDataList.addAll(mList);
+                                    adapter.notifyDataSetChanged();
+                                    activity.dismissLoading();
+                                    activity.showAppToast("更新成功");
+                                }
+                                @Override
+                                public void onFail(String msg){
+                                    activity.dismissLoading();
+                                    activity.showAppToast("更新失败:"+msg);
+                                }
+                            });
+                        }
+                    });
+                    dialog.setCancelText("取消");
+                    dialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.cancel();
+                        }
+                    });
+                    dialog.show();
+                }
                 listview.refreshComplete("");
             }
 

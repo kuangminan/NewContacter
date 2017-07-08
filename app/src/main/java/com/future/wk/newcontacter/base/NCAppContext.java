@@ -10,6 +10,7 @@ public class NCAppContext implements Serializable {
 
     public static final String DB_COMMON = "common";//公共数据库
     public static final int PAGESIZE = 20;//每页20条数据
+    public static final String ApplicationID = "abb031b16f884a4902fcc608ce96762e";
 
     private WeakReference<Context> context;
     private static NCAppContext instance = null;

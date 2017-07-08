@@ -22,6 +22,19 @@
         android:textSize="18dp"
         android:layout_below="@+id/image_center"
         android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/checkUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="检查更新"
+        android:clickable="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/remindText"
+        android:layout_marginTop="20dp"
+        android:textSize="18dp"
+        android:textColor="@drawable/selector_click_textview"/>
+
      <TextView
          android:id="@+id/author"
          android:layout_width="wrap_content"

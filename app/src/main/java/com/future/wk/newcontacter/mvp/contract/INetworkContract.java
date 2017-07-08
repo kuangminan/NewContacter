@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface INetworkContract {
     interface INetworkModel extends IBaseModel{
-        void getNetworkContactList();
+        List getNetworkContactList();
         List getAddYellowPageList(Context mContext);
        public void removeYellowPageByID(String userid);
         //...
