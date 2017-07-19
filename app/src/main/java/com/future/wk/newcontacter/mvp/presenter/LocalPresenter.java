@@ -178,6 +178,7 @@ public class LocalPresenter extends BasePresenter<ILocalContract.ILocalView> {
             }
             @Override
             public void onFail(String msg) {
+                Log.d(TAG,"PhoneNumber fail:"+msg);
                 callBack.onFail(msg);
             }
         };
@@ -194,7 +195,7 @@ public class LocalPresenter extends BasePresenter<ILocalContract.ILocalView> {
             }
             @Override
             public void onFail(String msg) {
-                Log.d(TAG,"onFail");
+                Log.d(TAG,"contact onFail:"+msg);
                 callBack.onFail(msg);
             }
         };

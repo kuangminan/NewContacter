@@ -52,6 +52,7 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
 
     @Override
     public void onInitView(Bundle savedInstanceState){
+        Log.d(TAG,"onInitView");
         filter_letters.setTextView(tv_letter);
         adapter = new ContactListAdapter(getContext(),mDataList);
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -63,10 +64,14 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
         filter_letters.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
             @Override
             public void onTouchingLetterChanged(String s) {
+                // 该字母首次出现的位置
+                Log.d(TAG,"onTouch Letter:"+s);
+
                 if (s != null && s.trim().length() > 0) {
                     tv_letter.setText(s);
                     if (adapter.getAlphaIndexer().get(s) != null) {
                         int position = adapter.getAlphaIndexer().get(s);
+                        Log.d(TAG,"position:"+position);
                         linearLayoutManager.scrollToPositionWithOffset(position+1, 0);
                     }
                 }
@@ -97,6 +102,7 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
                                 @Override
                                 public void onSuccess(List<ContactDALEx> mList){
                                     mDataList.addAll(mList);
+                                    adapter.init();
                                     adapter.notifyDataSetChanged();
                                     activity.dismissLoading();
                                     activity.showAppToast("更新成功");
@@ -137,6 +143,7 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
             showDialogAddContact();
         }else{
             mDataList.addAll(mList);
+            adapter.init();
             adapter.notifyDataSetChanged();
         }
     }
@@ -151,15 +158,18 @@ public class LocalContacterFragment extends BaseFragment<LocalPresenter> impleme
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 activity.showLoading("同步中...");
                 sweetAlertDialog.cancel();
+                Log.d(TAG,"show 同步中。。。");
                 mPresenter.getFromContactList(getActivity(),new ICallBack<ContactDALEx>(){
                     @Override
                     public void onSuccess(List<ContactDALEx> mList){
                         mDataList.addAll(mList);
+                        adapter.init();
                         adapter.notifyDataSetChanged();
                         activity.dismissLoading();
                     }
                     @Override
                     public void onFail(String msg){
+                        Log.d(TAG,"同步失败："+msg);
                         activity.dismissLoading();
                     }
                 });

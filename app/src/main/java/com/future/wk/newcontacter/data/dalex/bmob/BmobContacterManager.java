@@ -26,6 +26,7 @@ import static com.future.wk.newcontacter.data.dalex.bmob.contacterBmob.TABLENAME
 
 public class BmobContacterManager implements IContactManager {
 
+    private static int MaxNum = 50;
     private String TAG = "BmobContacterManager";
 
 
@@ -49,33 +50,76 @@ public class BmobContacterManager implements IContactManager {
 
     public void addContacterList(final List<ContactDALEx> conactList, final ICallBackObject<ContactDALEx> callBackObject){
         Log.d(TAG,"addContacterList size:"+conactList.size());
-        BmobBatch batch = new BmobBatch();
         List<BmobObject> contactBombList = new ArrayList<BmobObject>();
         if(conactList != null) {
-            for (int i = 0; i < conactList.size(); i++) {
-                contacterBmob contactbmob = new contacterBmob();
-                contactBombList.add(contactbmob.ConvertTocontacterBmob(conactList.get(i)));
+            int contactNumberSize = conactList.size();
+            Log.d(TAG,"contact size:"+contactNumberSize);
+            int batchNum = contactNumberSize/MaxNum;
+            Log.d(TAG,"batchNum:"+batchNum);
+            int startNum = 0;
+            for(int j = 1; j <= batchNum; j++) {
+                BmobBatch batch = new BmobBatch();
+                Log.d(TAG, "startNum:" + startNum);
+                Log.d(TAG,"MaxNum:"+j*MaxNum);
+                for (int i = startNum; i < j*MaxNum; i++) {
+                    contacterBmob contactbmob = new contacterBmob();
+                    contactBombList.add(contactbmob.ConvertTocontacterBmob(conactList.get(i)));
+                }
+                Log.d(TAG, "contactBombList size:" + contactBombList.size());
+                batch.insertBatch(contactBombList);
+                batch.doBatch(new QueryListListener<BatchResult>() {
+                    @Override
+                    public void done(List<BatchResult> list, BmobException e) {
+                        if (e == null) {
+                            for (int i = 0; i < list.size(); i++) {
+                                BatchResult result = list.get(i);
+                                BmobException ex = result.getError();
+                                if (ex == null) {
+                                    Log.d(TAG, "第" + i + "个数据添加成功");
+                                } else {
+                                    Log.d(TAG, "第" + i + "个数据添加失败 " + ex.getMessage());
+                                }
+                            }
+
+                            Log.d(TAG, "onSuccess");
+                            //callBackObject.onSuccess(null);
+                        } else {
+                            Log.d(TAG, "onFail:" + e.getMessage());
+                            callBackObject.onFail(e.getMessage());
+                        }
+                    }
+                });
+                contactBombList.clear();
+                startNum = MaxNum*j;
             }
-            Log.d(TAG,"contactBombList size:"+contactBombList.size());
+
+            //store the last
+            Log.d(TAG,"Last startNum:"+startNum);
+            BmobBatch batch = new BmobBatch();
+            for(int k = startNum; k < contactNumberSize; k++) {
+                contacterBmob contactbmob = new contacterBmob();
+                contactBombList.add(contactbmob.ConvertTocontacterBmob(conactList.get(k)));
+            }
+            Log.d(TAG, "contactBombList size:" + contactBombList.size());
             batch.insertBatch(contactBombList);
             batch.doBatch(new QueryListListener<BatchResult>() {
                 @Override
                 public void done(List<BatchResult> list, BmobException e) {
                     if (e == null) {
-                        for(int i = 0; i<list.size(); i++){
+                        for (int i = 0; i < list.size(); i++) {
                             BatchResult result = list.get(i);
                             BmobException ex = result.getError();
-                            if(ex == null){
-                                Log.d(TAG,"第"+i+"个数据添加成功");
-                            }else{
-                                Log.d(TAG, "第"+ i +"个数据添加失败 "+ex.getMessage());
+                            if (ex == null) {
+                                Log.d(TAG, "第" + i + "个数据添加成功");
+                            } else {
+                                Log.d(TAG, "第" + i + "个数据添加失败 " + ex.getMessage());
                             }
                         }
 
-                        Log.d(TAG,"onSuccess");
+                        Log.d(TAG, "onSuccess");
                         callBackObject.onSuccess(null);
                     } else {
-                        Log.d(TAG,"onFail:"+e.getMessage());
+                        Log.d(TAG, "onFail:" + e.getMessage());
                         callBackObject.onFail(e.getMessage());
                     }
                 }

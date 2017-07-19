@@ -54,7 +54,7 @@ public class ContactListAdapter extends BaseRecyclerViewAdapter<ContactDALEx> {
 
     public ContactListAdapter(Context context, List<ContactDALEx> data) {
         super(context, R.layout.item_contact_list, data);
-//        init();
+        init();
     }
 
     @Override
@@ -184,7 +184,8 @@ public class ContactListAdapter extends BaseRecyclerViewAdapter<ContactDALEx> {
     }
 
     public void init() {
-
+        Log.d(TAG,"init alphaIndexer");
+        Log.d(TAG,"isAlphaSearch:"+isAlphaSearch);
         if (isAlphaSearch) {
             //构建字母列表索引
             if (alphaIndexer == null) {
@@ -192,9 +193,10 @@ public class ContactListAdapter extends BaseRecyclerViewAdapter<ContactDALEx> {
             } else {
                 alphaIndexer.clear();
             }
-
+            Log.d(TAG,"getData().size():"+getData().size());
             for (int index = 0; index < getData().size(); index++) {
                 String alpha = CorePinYinUtil.getPinyinFirstAlpha(getData().get(index).getNamepinyin());
+                Log.d(TAG,"alpha:"+alpha);
                 if (!alphaIndexer.containsKey(alpha)) {
                     alphaIndexer.put(alpha, index);
                 }

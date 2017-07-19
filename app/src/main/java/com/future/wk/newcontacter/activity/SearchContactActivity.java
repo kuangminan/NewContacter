@@ -120,7 +120,6 @@ public class SearchContactActivity extends BaseActivity<SearchContactPresenter> 
         mNavigationText.setRightButton( "搜索", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 for(int i = 0; i < group_list.size(); i++){
                     if(expandableListView.isGroupExpanded(i)){
                         expandableListView.collapseGroup(i);
@@ -130,6 +129,9 @@ public class SearchContactActivity extends BaseActivity<SearchContactPresenter> 
                 adapter.notifyDataSetChanged();
 
                 String searchKey = mNavigationText.getSearchValue();
+                if(searchKey.equals("")){
+                    return;
+                }
                 List<ContactDALEx> NormalList = mPresenter.findLocalContact(searchKey);
                 List<ContactDALEx> YPList = mPresenter.findYPContact(searchKey);
                 if((NormalList.size() > 0) || (YPList.size() >0)) {
